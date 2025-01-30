@@ -26,7 +26,7 @@ FROM
 LEFT JOIN 
     type_paiement tp
 ON 
-    ttc.type_paiement_id = tp.id ORDER BY TTC.date_livraison DESC
+    ttc.type_paiement_id = tp.id ORDER BY ttc.date_livraison DESC
 ");
 
 $query->execute();
