@@ -254,7 +254,7 @@ label {
 
     <div class="block-container">
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-commande">
-      <i class="fa fa-edit"></i>Enregistrer une commande
+      <i class="fa fa-edit"></i>Enregistrer une commande1
     </button>
 
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point">
