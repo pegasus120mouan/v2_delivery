@@ -6,11 +6,11 @@ require_once '../inc/functions/requete/requetes_selection_boutique.php';
 include('header.php');
 
 // Vérifier si le bouton refresh a été cliqué
-if(isset($_POST['refresh'])) {
+/*if(isset($_POST['refresh'])) {
     include 'script.php';
     header('Location: listes_des_depots.php');
     exit;
-}
+}*/
 
 $query = $conn->prepare("
 SELECT 
