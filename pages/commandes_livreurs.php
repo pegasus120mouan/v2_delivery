@@ -203,6 +203,8 @@ label {
             <th>Actions</th>
             <th>Changer le livreur</th>
             <th>Changer Statut livraison</th>
+            <th>Changer date Livraison</th>
+            <th>Changer date Retour</th>
         </tr>
         </thead>
         
@@ -243,7 +245,9 @@ label {
                         </span>
                     <?php endif; ?>
                </td>
+
                 <td><?= $commande_livreur['date_reception'] ?></td>
+
                 <td>
                     <?php if ($commande_livreur['date_livraison'] === NULL): ?>
                         <i class="fas fa-clock" style="font-size: 24px; color: orange;" title="Colis pas encore livré"></i>
@@ -251,6 +255,7 @@ label {
                         <?= $commande_livreur['date_livraison'] ?>
                     <?php endif; ?>
                 </td>
+
                 <td><?= $commande_livreur['date_retour'] ?>
     <?php if (empty($commande_livreur['date_retour'])) : ?>
         <!-- Affiche une icône si le colis n'est pas encore retourné -->
@@ -258,13 +263,14 @@ label {
     <?php endif; ?>
       </td>
                 <td class="actions">
-                    <a href="update_commandes_par_livreurs.php?id=<?= $commande_livreur['commande_id'] ?>&id_user=<?= $id_user ?>" class="edit">
+                    <a href="#" class="edit" data-toggle="modal" data-target="#edit-modal-<?= $commande_livreur['commande_id'] ?>">
                         <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i> 
                     </a>
                     <a href="javascript:void(0)" onclick="confirmDelete(<?= $commande_livreur['commande_id'] ?>, <?= $id_user ?>)" class="trash">
                         <i class="fas fa-trash" style="font-size:24px;color:red"></i> 
                     </a>
                 </td>
+
                 <td>
                     <?php if ($commande_livreur['nom_livreur']) : ?>
                     <button class="btn btn-info" data-toggle="modal"
@@ -278,6 +284,7 @@ label {
                     </button>
                     <?php endif; ?>
                 </td>
+
                 <td>
                     <?php if ($commande_livreur['commande_statut'] == 'Livré') : ?>
                     <button class="btn btn-info" disabled>
@@ -286,10 +293,30 @@ label {
                     <?php else : ?>
                     <button class="btn btn-secondary" data-toggle="modal"
                         data-target="#update_statut-<?= $commande_livreur['commande_id'] ?>">
-                        <i class="fas fa-sync-alt"></i>
+                        <i class="fas fa-truck"></i>
                     </button>
                     <?php endif; ?>
                 </td>
+
+                <td>
+                    <button class="btn btn-secondary" data-toggle="modal"
+                        data-target="#update_date_livraison-<?= $commande_livreur['commande_id'] ?>">
+                        <i class="fas fa-box"></i>
+                </td>
+
+                <td>
+                    <?php if ($commande_livreur['commande_statut'] == 'Livré') : ?>
+                    <button class="btn btn-info" disabled>
+                        <i class="fas fa-lock"></i>
+                    </button>
+                    <?php else : ?>
+                    <button class="btn btn-secondary" data-toggle="modal"
+                        data-target="#update_date_retour-<?= $commande_livreur['commande_id'] ?>">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <?php endif; ?>
+                </td>
+
             </tr>
             <div class="modal" id="update-<?= $commande_livreur['commande_id'] ?>">
                 <div class="modal-dialog">
@@ -322,7 +349,6 @@ label {
                     <div class="modal-body">
                     <form action="traitement_livreur_commande_update.php?id=<?= $id_user ?>" method="post">
                     <!-- <form action="traitement_livreur_commande_update.php" method="post">-->
-
                     
                     <!-- <form class="forms-sample" method="post" action="save_commande_livreur.php?id=<?= $id_user ?>">-->
                         <input type="hidden" name="commande_id" value="<?= $commande_livreur['commande_id'] ?>">
@@ -509,6 +535,134 @@ label {
         </div>
     </div>
 </div>
+
+<?php foreach ($commandes_livreurs_list as $commande_livreur): ?>
+<div class="modal fade" id="edit-modal-<?= $commande_livreur['commande_id'] ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel-<?= $commande_livreur['commande_id'] ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel-<?= $commande_livreur['commande_id'] ?>">Modifier la commande</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="traitement_update_commandes_par_livreurs.php?id=<?= $commande_livreur['commande_id'] ?>&id_user=<?= $id_user ?>" method="post">
+                    <input type="hidden" name="id" value="<?= $commande_livreur['commande_id'] ?>">
+                    <input type="hidden" name="user_id" value="<?= $id_user ?>">
+                    
+                    <div class="form-group">
+                        <label for="communes-<?= $commande_livreur['commande_id'] ?>">Communes</label>
+                        <input type="text" class="form-control" id="communes-<?= $commande_livreur['commande_id'] ?>" 
+                               name="communes" value="<?= $commande_livreur['commande_communes'] ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cout_global-<?= $commande_livreur['commande_id'] ?>">Coût Global</label>
+                        <input type="text" class="form-control" id="cout_global-<?= $commande_livreur['commande_id'] ?>" 
+                               name="cout_global" value="<?= $commande_livreur['commande_cout_global'] ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="livraison-<?= $commande_livreur['commande_id'] ?>">Coût Livraison</label>
+                        <select id="livraison-<?= $commande_livreur['commande_id'] ?>" name="livraison" class="form-control">
+                            <?php
+                            $cout_livraison = $conn->query("SELECT cout_livraison FROM cout_livraison");
+                            while ($coutLivraison = $cout_livraison->fetch(PDO::FETCH_ASSOC)) {
+                                $selected = ($coutLivraison['cout_livraison'] == $commande_livreur['commande_cout_livraison']) ? 'selected' : '';
+                                echo '<option value="' . $coutLivraison['cout_livraison'] . '" ' . $selected . '>' . 
+                                     $coutLivraison['cout_livraison'] . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="statut-<?= $commande_livreur['commande_id'] ?>">Statut Livraison</label>
+                        <select id="statut-<?= $commande_livreur['commande_id'] ?>" name="statut_livraison" class="form-control">
+                            <option value="Non Livré" <?= ($commande_livreur['commande_statut'] == 'Non Livré') ? 'selected' : '' ?>>Non Livré</option>
+                            <option value="Livré" <?= ($commande_livreur['commande_statut'] == 'Livré') ? 'selected' : '' ?>>Livré</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date-<?= $commande_livreur['commande_id'] ?>">Date</label>
+                        <input type="date" class="form-control" id="date-<?= $commande_livreur['commande_id'] ?>" 
+                               name="date" value="<?= date('Y-m-d', strtotime($commande_livreur['date_reception'])) ?>">
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary" name="saveCommande">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
+
+<?php foreach ($commandes_livreurs_list as $commande_livreur): ?>
+<div class="modal fade" id="update_date_livraison-<?= $commande_livreur['commande_id'] ?>" tabindex="-1" role="dialog" aria-labelledby="updateDateLabel-<?= $commande_livreur['commande_id'] ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateDateLabel-<?= $commande_livreur['commande_id'] ?>">Modifier la date de livraison</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="traitement_update_date_livraison.php" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="commande_id" value="<?= $commande_livreur['commande_id'] ?>">
+                    <input type="hidden" name="id_user" value="<?= $id_user ?>">
+                    
+                    <div class="form-group">
+                        <label for="date_livraison-<?= $commande_livreur['commande_id'] ?>">Date de livraison</label>
+                        <input type="date" class="form-control" id="date_livraison-<?= $commande_livreur['commande_id'] ?>" 
+                               name="date_livraison" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
+
+<?php foreach ($commandes_livreurs_list as $commande_livreur): ?>
+<div class="modal fade" id="update_date_retour-<?= $commande_livreur['commande_id'] ?>" tabindex="-1" role="dialog" aria-labelledby="updateDateRetourLabel-<?= $commande_livreur['commande_id'] ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateDateRetourLabel-<?= $commande_livreur['commande_id'] ?>">Modifier la date de retour</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="traitement_update_date_retour.php" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="commande_id" value="<?= $commande_livreur['commande_id'] ?>">
+                    <input type="hidden" name="id_user" value="<?= $id_user ?>">
+                    
+                    <div class="form-group">
+                        <label for="date_retour-<?= $commande_livreur['commande_id'] ?>">Date de retour</label>
+                        <input type="date" class="form-control" id="date_retour-<?= $commande_livreur['commande_id'] ?>" 
+                               name="date_retour" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
 
 <!-- Loader -->
 <div class="loader-container">

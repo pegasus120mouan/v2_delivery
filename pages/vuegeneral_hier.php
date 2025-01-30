@@ -14,7 +14,7 @@ $getSommeGlobalQuery = "
     FROM utilisateurs 
     JOIN commandes ON utilisateurs.id = commandes.livreur_id 
     JOIN livreurs ON livreurs.id = commandes.livreur_id 
-    WHERE DATE(date_reception) = DATE(NOW() - INTERVAL 1 DAY)
+    WHERE DATE(date_livraison) = DATE(NOW() - INTERVAL 1 DAY)
     AND commandes.livreur_id = :id_user 
     AND commandes.statut = 'Livré'
 ";
@@ -29,7 +29,7 @@ $getCoutReelQuery = "SELECT SUM(cout_reel) AS sum_cout_reel
     FROM utilisateurs 
     JOIN commandes ON utilisateurs.id = commandes.livreur_id 
     JOIN livreurs ON livreurs.id = commandes.livreur_id 
-    WHERE DATE(date_reception) = DATE(NOW() - INTERVAL 1 DAY)
+    WHERE DATE(date_livraison) = DATE(NOW() - INTERVAL 1 DAY)
     AND commandes.livreur_id = :id_user
 ";
 
@@ -46,7 +46,7 @@ $getSommeDepenseQuery = "
     FROM points_livreurs p
     JOIN livreurs l ON p.utilisateur_id = l.id 
     JOIN commandes c ON l.id = c.livreur_id
-    WHERE DATE(c.date_reception) = DATE(NOW() - INTERVAL 1 DAY)
+    WHERE DATE(c.date_livraison) = DATE(NOW() - INTERVAL 1 DAY)
     AND l.id = :id_user
     GROUP BY p.depense, p.date_commande, l.nom, l.prenoms
 ";
@@ -61,7 +61,7 @@ $getSommeGainQuery = "
     FROM points_livreurs p
     JOIN livreurs l ON p.utilisateur_id = l.id 
     JOIN commandes c ON l.id = c.livreur_id
-    WHERE DATE(c.date_reception) = DATE(NOW() - INTERVAL 1 DAY)
+    WHERE DATE(c.date_livraison) = DATE(NOW() - INTERVAL 1 DAY)
     AND l.id = :id_user
     GROUP BY p.gain_jour, p.date_commande, l.nom, l.prenoms
 ";

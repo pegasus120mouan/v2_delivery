@@ -116,18 +116,6 @@ if (isset($_POST['livreur_id']) && isset($_POST['date'])) {
     $pdf->SetAutoPageBreak(true, 25); // Marge bas de 25mm pour le footer
     $pdf->AddPage();
 
-    // En-tête avec logo et infos OVL
-    $pdf->SetFont('Arial', 'B', 16);
-    $pdf->Cell(0, 10, 'OVL DELIVERY SERVICES', 0, 1, 'C');
-    
-    $pdf->SetFont('Arial', '', 10);
-    $pdf->Cell(0, 5, utf8_decode('Sarl au Capital de 1 000 000 CFA'), 0, 1, 'C');
-    $pdf->Cell(0, 5, 'Cocody Rivera Golf en face de l\'Ambassade des USA', 0, 1, 'C');
-    $pdf->Cell(0, 5, utf8_decode('Tel: +225 0787703900 - +22505464283385'), 0, 1, 'C');
-    $pdf->Cell(0, 5, 'Email: france@ovl-delivery.online', 0, 1, 'C');
-    $pdf->Cell(0, 5, 'ovl-delivery.online', 0, 1, 'C');
-    $pdf->Cell(0, 5, '+22505464283385', 0, 1, 'C');
-
     $pdf->Ln(10);
 
     // Cadre gris pour les informations du rapport
@@ -147,38 +135,44 @@ if (isset($_POST['livreur_id']) && isset($_POST['date'])) {
     $pdf->Ln(10);
 
     // En-têtes du tableau
-    $pdf->SetFillColor(52, 152, 219); // Bleu clair
-    $pdf->SetTextColor(255);
-    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->SetFillColor(0, 0, 0); // Fond noir
+    $pdf->SetTextColor(255, 255, 255); // Texte blanc pour contraste
+    $pdf->SetFont('Arial', 'B', 9);
+    $header = array('Commune', 'Boutique', 'Date Reception', 'Date Livraison', 'Coût Réel', 'Statut');
+    $w = array(50, 30, 35, 35, 20, 20);
     
-    $pdf->Cell(40, 10, 'COMMUNES', 1, 0, 'C', true);
-    $pdf->Cell(40, 10, 'MONTANT', 1, 0, 'C', true);
-    $pdf->Cell(35, 10, 'STATUT', 1, 0, 'C', true);
-    $pdf->Cell(40, 10, utf8_decode('RÉCEPTION'), 1, 0, 'C', true);
-    $pdf->Cell(35, 10, 'BOUTIQUE', 1, 1, 'C', true);
-
-    // Données du tableau
+    for($i = 0; $i < count($header); $i++)
+        $pdf->Cell($w[$i], 7, utf8_decode($header[$i]), 1, 0, 'C', true);
+    $pdf->Ln();
+    
+    // Contenu du tableau
+    $pdf->SetFillColor(255);
     $pdf->SetTextColor(0);
-    $pdf->SetFont('Arial', '', 10);
-    $total = 0;
-    $commandes_livrees = 0;
-
-    foreach ($resultat as $row) {
-        // Fond rose pour non livré
+    $pdf->SetFont('Arial', '', 9);
+    
+    $total_cout_reel = 0;
+    
+    foreach($resultat as $row) {
+        // Définir la couleur du texte en fonction du statut
         if ($row['statut'] != 'Livré') {
-            $pdf->SetFillColor(255, 228, 225);
+            $pdf->SetTextColor(255, 0, 0); // Rouge pour non livré
         } else {
-            $pdf->SetFillColor(255, 255, 255);
-            $total += $row['cout_reel'];
-            $commandes_livrees++;
+            $pdf->SetTextColor(0, 0, 0); // Noir pour livré
         }
-
-        $pdf->Cell(40, 10, utf8_decode($row['communes']), 1, 0, 'C', true);
-        $pdf->Cell(40, 10, number_format($row['cout_reel'], 0, ',', ' ') . ' F', 1, 0, 'C', true);
-        $pdf->Cell(35, 10, utf8_decode($row['statut']), 1, 0, 'C', true);
-        $pdf->Cell(40, 10, date('d/m/Y', strtotime($row['date_reception'])), 1, 0, 'C', true);
-        $pdf->Cell(35, 10, utf8_decode($row['boutique_nom']), 1, 1, 'C', true);
+        
+        $pdf->Cell($w[0], 6, utf8_decode($row['communes']), 1, 0, 'L');
+        $pdf->Cell($w[1], 6, utf8_decode($row['boutique_nom']), 1, 0, 'L');
+        $pdf->Cell($w[2], 6, date('d/m/Y H:i', strtotime($row['date_reception'])), 1, 0, 'C');
+        $pdf->Cell($w[3], 6, $row['date_livraison'] ? date('d/m/Y H:i', strtotime($row['date_livraison'])) : '-', 1, 0, 'C');
+        $pdf->Cell($w[4], 6, number_format($row['cout_reel'], 0, ',', ' '), 1, 0, 'R');
+        $pdf->Cell($w[5], 6, utf8_decode($row['statut']), 1, 0, 'C');
+        $pdf->Ln();
+        
+        $total_cout_reel += $row['cout_reel'];
     }
+
+    // Réinitialiser la couleur du texte pour les statistiques
+    $pdf->SetTextColor(0, 0, 0);
 
     $pdf->Ln(10);
 
@@ -193,19 +187,16 @@ if (isset($_POST['livreur_id']) && isset($_POST['date'])) {
     
     // Données statistiques
     $total_commandes = count($resultat);
-    $taux_livraison = ($total_commandes > 0) ? ($commandes_livrees / $total_commandes) * 100 : 0;
+    $taux_livraison = ($total_commandes > 0) ? ($total_cout_reel / $total_commandes) * 100 : 0;
     
     $pdf->Cell(150, 10, 'Nombre total de commandes:', 1, 0, 'L');
     $pdf->Cell(40, 10, $total_commandes, 1, 1, 'C');
     
-    $pdf->Cell(150, 10, utf8_decode('Commandes livrées:'), 1, 0, 'L');
-    $pdf->Cell(40, 10, $commandes_livrees, 1, 1, 'C');
-    
-    $pdf->Cell(150, 10, 'Taux de livraison:', 1, 0, 'L');
-    $pdf->Cell(40, 10, number_format($taux_livraison, 1) . '%', 1, 1, 'C');
-    
-    $pdf->Cell(150, 10, 'Montant total des livraisons:', 1, 0, 'L');
-    $pdf->Cell(40, 10, number_format($total, 0, ',', ' ') . ' F', 1, 1, 'C');
+    // Montant total avec une police plus grande
+    $pdf->SetFont('Arial', 'B', 14); // Police plus grande et en gras
+    $pdf->Cell(150, 14, 'Montant total des livraisons:', 1, 0, 'L');
+    $pdf->Cell(40, 15, number_format($total_cout_reel, 0, ',', ' ') . ' F', 1, 1, 'C');
+    $pdf->SetFont('Arial', '', 9); // Retour à la police normale
 
     // Format the date for the file name
     $nom_livreur = str_replace(' ', '_', trim($resultat[0]['fullname_livreur']));

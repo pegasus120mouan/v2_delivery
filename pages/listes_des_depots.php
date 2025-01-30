@@ -357,6 +357,215 @@ label {
 }
 </style>
 
+<style>
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-action {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.2s ease;
+}
+
+.btn-action:hover::before {
+    transform: translateY(0);
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+.btn-action.btn-info {
+    background: linear-gradient(145deg, #1ab6cf, #148a9c);
+    box-shadow: 0 2px 10px rgba(23, 162, 184, 0.3);
+}
+
+.btn-action.btn-danger {
+    background: linear-gradient(145deg, #e84c3d, #c0392b);
+    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+}
+
+.btn-action i {
+    font-size: 14px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    z-index: 1;
+}
+
+/* Tooltip personnalisé */
+.btn-action[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+}
+</style>
+
+<style>
+/* Styles généraux pour les textes */
+.table {
+    font-size: 16px !important;
+}
+
+.badge {
+    font-size: 14px !important;
+    padding: 8px 15px !important;
+}
+
+.btn {
+    font-size: 14px !important;
+}
+
+.thead-dark th {
+    font-size: 16px !important;
+    padding: 15px !important;
+}
+
+/* Styles pour la pagination */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+    gap: 15px;
+}
+
+.pagination-info {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pagination-button {
+    padding: 10px 20px;
+    font-size: 16px !important;
+    font-weight: 500;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.pagination-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.items-per-page-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.items-per-page-form label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.items-per-page-form select {
+    font-size: 16px;
+    padding: 8px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+}
+</style>
+
+<style>
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-action {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-action.btn-info {
+    background: #17a2b8;
+}
+
+.btn-action.btn-danger {
+    background: #dc3545;
+}
+
+.btn-action i {
+    font-size: 16px;
+    color: white;
+}
+</style>
 
 <!-- Loader -->
 <div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;">
@@ -365,6 +574,30 @@ label {
             <span class="sr-only">Chargement...</span>
         </div>
         <div class="text-light mt-2">Mise à jour des données en cours...</div>
+    </div>
+</div>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $_SESSION['success_message'] ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php unset($_SESSION['success_message']); ?>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $_SESSION['error_message'] ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php unset($_SESSION['error_message']); ?>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -423,9 +656,16 @@ label {
 
 
            <td>
-                <button class="btn btn-sm btn-info" title="Mettre à jour le paiement" data-toggle="modal" data-target="#updatePaymentModal<?= $resultat['id_total_cout'] ?>">
-                    <i class="fas fa-eye"></i>
-                </button>
+                <div class="action-buttons">
+                    <button class="btn-action btn-info" title="Voir les détails" data-toggle="modal" data-target="#updatePaymentModal<?= $resultat['id_total_cout'] ?>">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-action btn-danger" title="Supprimer" onclick="confirmDelete(<?= $resultat['id_total_cout'] ?>)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </td>
+
 
                 <!-- Modal pour la mise à jour du paiement -->
                 <div class="modal fade" id="updatePaymentModal<?= $resultat['id_total_cout'] ?>" tabindex="-1" role="dialog" aria-labelledby="updatePaymentModalLabel<?= $resultat['id_total_cout'] ?>" aria-hidden="true">
@@ -469,6 +709,33 @@ label {
                                     <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal pour la suppression du paiement -->
+                <div class="modal fade" id="deletePaymentModal<?= $resultat['id_total_cout'] ?>" tabindex="-1" role="dialog" aria-labelledby="deletePaymentModalLabel<?= $resultat['id_total_cout'] ?>" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deletePaymentModalLabel<?= $resultat['id_total_cout'] ?>">Confirmer la suppression</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Êtes-vous sûr de vouloir supprimer ce paiement ?</p>
+                                <p><strong>Boutique:</strong> <?= $resultat['nom_boutique'] ?></p>
+                                <p><strong>Date:</strong> <?= $resultat['date_livraison'] ?></p>
+                                <p><strong>Montant:</strong> <?= number_format($resultat['total_cout_reel_par_jour'], 0, ',', ' ') ?> FCFA</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                <form action="traitement_delete_depot.php" method="POST" style="display: inline;" id="deleteForm<?= $resultat['id_total_cout'] ?>">
+                                    <input type="hidden" name="id_total_cout" value="<?= $resultat['id_total_cout'] ?>">
+                                    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -626,4 +893,13 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+
+<script>
+    // Fonction pour confirmer la suppression
+    function confirmDelete(id) {
+    if (confirm("Voulez-vous vraiment supprimer ce paiement ?")) {
+        window.location.href = "delete_table_total_cout_par_jour.php?id=" + id;
+    }
+}
 </script>

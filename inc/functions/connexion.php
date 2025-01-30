@@ -4,7 +4,7 @@ session_start();
 define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','');
-define('DB_NAME','db_ovl');
+define('DB_NAME','ovl_db_pro');
 // Establish database connection.
 try
 {

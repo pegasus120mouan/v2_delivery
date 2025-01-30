@@ -14,7 +14,7 @@ $date= $_POST['date'];
 // Requête SQL d'update
 $sql = "UPDATE commandes
         SET communes = :communes, cout_global = :cout_global, cout_livraison = :livraison, 
-        cout_reel = :cout_reel, date_commande = :date
+        cout_reel = :cout_reel, date_reception = :date
         WHERE id = :id";
 
 // Préparation de la requête

@@ -157,21 +157,16 @@ $cout_livraison = $conn->query("SELECT cout_livraison FROM cout_livraison");
 $cout_livraison1 = $conn->query("SELECT cout_livraison FROM cout_livraison")->fetchAll();
 
 // Récupération des livreurs pour le select
-$getLivreurs = $conn->prepare("
-    SELECT 
-        id,
-        CONCAT(nom, ' ', prenoms) as livreur_name
-    FROM utilisateurs 
-    WHERE role = 'livreur'
-    ORDER BY nom ASC
-");
+$getLivreurs = $conn->query("SELECT id, CONCAT(nom, ' ', prenoms) AS livreur_name 
+FROM utilisateurs 
+WHERE role='livreur' AND statut_compte=1");
 $getLivreurs->execute();
 
+
+
+
 // Récupération des statuts possibles
-$getStatut = $conn->prepare("
-    SELECT  statut 
-    FROM statut_livraison 
-");
+$getStatut = $conn->prepare("SELECT  statut FROM statut_livraison");
 $getStatut->execute();
 
 $getBoutique = $conn->query("SELECT 

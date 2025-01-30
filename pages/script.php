@@ -38,11 +38,20 @@ if ($results->rowCount() > 0) {
 
     foreach ($results as $row) {
         // Exécution des données
-        $stmt->execute([
-            'nom_boutique' => $row['nom_boutique'],
-            'date_livraison' => $row['date_livraison'],
-            'total_cout_reel_par_jour' => $row['total_cout_reel_par_jour'],
-        ]);
+        $sql = 'select  *  from table_total_cout_par_jour where nom_boutique = "'.$row['nom_boutique'].'" AND date_livraison = "'.$row['date_livraison'].'"';
+        
+        $q = $conn->query($sql);
+        
+        
+        if($q->rowCount() == 0){
+            
+            $stmt->execute([
+                'nom_boutique' => $row['nom_boutique'],
+                'date_livraison' => $row['date_livraison'],
+                'total_cout_reel_par_jour' => $row['total_cout_reel_par_jour'],
+            ]);
+        }
+        
     }
 
     echo "Les données ont été insérées ou mises à jour si nécessaire.";

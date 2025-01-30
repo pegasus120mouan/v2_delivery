@@ -22,15 +22,15 @@ $resultats = $query->fetchAll(PDO::FETCH_ASSOC);
 
 $liste_boutiques = $getBoutique->fetchAll(PDO::FETCH_ASSOC);
 
-$limit = $_GET['limit'] ?? 15;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+// Pagination settings
+$limit = 10; // Fixed to 10 items per page
+$total_items = count($resultats);
+$total_pages = ceil($total_items / $limit);
+$page = isset($_GET['page']) ? max(1, min((int)$_GET['page'], $total_pages)) : 1;
+$offset = ($page - 1) * $limit;
 
-$commande_pages = array_chunk($resultats, $limit );
-//$commandes_list = $commande_pages[$_GET['page'] ?? ] ;
-$commandes_list = $commande_pages[$page - 1] ?? [];
-
-//var_dump($commandes_list);
-
+// Get items for current page
+$commandes_list = array_slice($resultats, $offset, $limit);
 
 ?>
 
@@ -360,7 +360,7 @@ label {
         </tr>
       </thead>
     <tbody>
-      <?php foreach ($resultats as $resultat) : ?>
+      <?php foreach ($commandes_list as $resultat) : ?>
         <tr>
           <td>
               <span class="badge badge-primary">
@@ -389,34 +389,156 @@ label {
 
 <!-- Pagination -->
 <div class="pagination-container">
-    <?php if ($page > 1): ?>
-        <a href="?page=<?= $page-1 ?>&limit=<?= $limit ?>" class="pagination-button">
-            <i class="fas fa-chevron-left"></i> Précédent
-        </a>
+    <?php if($total_pages > 1): ?>
+        <div class="pagination-wrapper">
+            <?php if($page > 1): ?>
+                <a href="?page=<?= $page-1 ?>" class="pagination-link nav-btn">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </a>
+            <?php endif; ?>
+            
+            <div class="pagination-numbers">
+                <?php if($page > 3): ?>
+                    <a href="?page=1" class="pagination-link">1</a>
+                    <?php if($page > 4): ?>
+                        <span class="pagination-ellipsis">...</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+                
+                <?php for($i = max(1, $page-2); $i <= min($total_pages, $page+2); $i++): ?>
+                    <a href="?page=<?= $i ?>" class="pagination-link <?= $i === $page ? 'active' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+                
+                <?php if($page < $total_pages-2): ?>
+                    <?php if($page < $total_pages-3): ?>
+                        <span class="pagination-ellipsis">...</span>
+                    <?php endif; ?>
+                    <a href="?page=<?= $total_pages ?>" class="pagination-link"><?= $total_pages ?></a>
+                <?php endif; ?>
+            </div>
+            
+            <?php if($page < $total_pages): ?>
+                <a href="?page=<?= $page+1 ?>" class="pagination-link nav-btn">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </a>
+            <?php endif; ?>
+        </div>
+        
+        <div class="pagination-info">
+            Page <span class="current-page"><?= $page ?></span> sur <span class="total-pages"><?= $total_pages ?></span>
+        </div>
     <?php endif; ?>
-
-    <div class="pagination-info">
-        Page <?= $page ?> sur <?= ceil(count($resultats) / $limit) ?>
-    </div>
-
-    <?php if ($page < ceil(count($resultats) / $limit)): ?>
-        <a href="?page=<?= $page+1 ?>&limit=<?= $limit ?>" class="pagination-button">
-            Suivant <i class="fas fa-chevron-right"></i>
-        </a>
-    <?php endif; ?>
-
-    <div class="items-per-page-form">
-        <form action="" method="GET" class="d-flex align-items-center">
-            <label for="limit">Afficher :</label>
-            <select name="limit" id="limit" onchange="this.form.submit()">
-                <option value="10" <?= $limit == 10 ? 'selected' : '' ?>>10</option>
-                <option value="25" <?= $limit == 25 ? 'selected' : '' ?>>25</option>
-                <option value="50" <?= $limit == 50 ? 'selected' : '' ?>>50</option>
-                <option value="100" <?= $limit == 100 ? 'selected' : '' ?>>100</option>
-            </select>
-        </form>
-    </div>
 </div>
+
+<style>
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.pagination-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 15px;
+    text-decoration: none;
+    color: #5a6268;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pagination-link:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+    transform: translateY(-2px);
+}
+
+.pagination-link.active {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.pagination-link.active:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.nav-btn {
+    font-weight: 600;
+    color: #007bff;
+    padding: 0 20px;
+}
+
+.nav-btn:hover {
+    background-color: #e7f1ff;
+}
+
+.nav-btn i {
+    font-size: 12px;
+    margin: 0 5px;
+}
+
+.pagination-ellipsis {
+    color: #6c757d;
+    padding: 0 5px;
+}
+
+.pagination-info {
+    margin-top: 15px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.current-page, .total-pages {
+    font-weight: 600;
+    color: #007bff;
+}
+
+@media (max-width: 576px) {
+    .pagination-wrapper {
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: 25px;
+        padding: 8px;
+    }
+    
+    .pagination-link {
+        min-width: 35px;
+        height: 35px;
+        padding: 0 10px;
+    }
+    
+    .nav-btn {
+        padding: 0 15px;
+    }
+}
+</style>
 
 <!-- /.row (main row) -->
 </div><!-- /.container-fluid -->
