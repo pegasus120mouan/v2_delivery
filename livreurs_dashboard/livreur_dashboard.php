@@ -17,7 +17,9 @@ $requete = $conn->prepare("SELECT
   commandes.cout_livraison as commande_cout_livraison,
   commandes.cout_reel as commande_cout_reel,
   commandes.statut as commande_statut,
-  commandes.date_commande as date_commande,
+  commandes.date_reception as date_reception,
+  commandes.date_livraison as date_livraison,
+  commandes.date_retour as date_retour,
   concat(livreurs.nom, ' ', livreurs.prenoms) as nom_livreur,
   clients.nom as nom_client,
   boutiques.nom as nom_boutique
@@ -25,7 +27,7 @@ from commandes
 join livreurs on livreurs.id=commandes.livreur_id
 join clients on clients.id=commandes.utilisateur_id
 join boutiques on boutiques.id=clients.boutique_id
-WHERE livreurs.id=:id_user order by date_commande DESC LIMIT 20");
+WHERE livreurs.id=:id_user order by date_reception DESC LIMIT 20");
 
 
 
@@ -125,7 +127,9 @@ label {
         <th>Client</th>
         <th>Livreur</th>
         <th>Statut</th>
-        <th>Date de la commande</th>
+        <th>Date Réception</th>
+        <th>Date Livraison</th>
+        <th>Date Retour</th>
         <th>Actions</th>
         <th>Attribuer un livreur</th>
         <th>Changer Statut livraison</th>
@@ -177,7 +181,9 @@ label {
 
 
 
-        <td><?= $commande_livreur['date_commande'] ?></td>
+        <td><?= $commande_livreur['date_reception'] ?></td>
+        <td><?= $commande_livreur['date_livraison'] ?></td>
+        <td><?= $commande_livreur['date_retour'] ?></td>
         <td class="actions">
           <a href="update_commandes_livreurs.php?id=<?= $commande_livreur['commande_id'] ?>" class="edit"><i
               class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i></a>

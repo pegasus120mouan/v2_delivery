@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
   $sql_livreur_cout_global = "SELECT SUM(cmd.cout_global) AS total_cout_global 
   FROM commandes cmd
   WHERE cmd.livreur_id = :id_user
-  and cmd.date_commande=CURRENT_DATE()
+  and cmd.date_reception=CURRENT_DATE()
   AND cmd.statut = 'Livré'";
   $requLivreurCg = $conn->prepare($sql_livreur_cout_global);
   $requLivreurCg->bindParam(':id_user', $id_user, PDO::PARAM_INT);
@@ -41,7 +41,7 @@ if (!isset($_SESSION['user_id'])) {
   $sql_livreur_colis = "SELECT COUNT(*) AS total_orders
   FROM commandes
   WHERE commandes.livreur_id = :id_user
-  AND commandes.date_commande=CURRENT_DATE()
+  AND commandes.date_reception=CURRENT_DATE()
   AND commandes.statut = 'Livré'";
   $requLivreurColis = $conn->prepare($sql_livreur_colis);
   $requLivreurColis->bindParam(':id_user', $id_user, PDO::PARAM_INT);
