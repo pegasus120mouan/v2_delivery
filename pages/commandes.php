@@ -302,7 +302,7 @@ label {
  <!-- <table style="max-height: 90vh !important; overflow-y: scroll !important" id="example1" class="table table-bordered table-striped">-->
     <thead>
       <tr>
-        <th>Communes</th>
+        <th>Communes1</th>
         <th>Coût Global</th>
         <th>Livraison</th>
         <th>Côut réel</th>
