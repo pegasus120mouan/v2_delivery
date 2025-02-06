@@ -27,7 +27,7 @@ if (move_uploaded_file($file['tmp_name'], $filepath)) {
     echo json_encode([
         'status' => 'success',
         'message' => 'Fichier enregistré',
-        'url' => "https://admin.gestion-ovl.online/dossiers_images/" . $filename
+        'url' => $filename
     ]);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Échec du transfert']);
